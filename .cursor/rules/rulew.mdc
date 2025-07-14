@@ -4,11 +4,12 @@ alwaysApply: true
 Chỉ code bằng html css js và json. 
 code bằng ngôn ngữ nào thì đưa file vào trong folder đó.
 đây là cấu trúc folder mẫu cho một số trang, bạn cần xem và làm theo 
-PS E:\project\vg_web> tree /f
+PS E:\project\vg_web> tree /f 
 Folder PATH listing for volume data
 Volume serial number is 3259-B460  
 E:.
 │   index.html
+│   README.md
 │
 ├───.cursor
 │   └───rules
@@ -23,6 +24,9 @@ E:.
 │       │
 │       └───chrome
 ├───api
+│       test_mysql_connect.php
+│
+├───api_client
 └───page
     ├───auth
     │   ├───forgotpass
@@ -35,7 +39,17 @@ E:.
     │   │   └───js
     │   │           script.js
     │   │
-    │   └───login
+    │   ├───login
+    │   │   ├───css
+    │   │   │       style.css
+    │   │   │
+    │   │   ├───html
+    │   │   │       index.html
+    │   │   │
+    │   │   └───js
+    │   │           script.js
+    │   │
+    │   └───register
     │       ├───css
     │       │       style.css
     │       │
@@ -45,8 +59,26 @@ E:.
     │       └───js
     │               script.js
     │
-    └───component
-PS E:\project\vg_web>
+    ├───component
+    │       common.css
+    │       common.js
+    │       footer.html
+    │       header.html
+    │       navigation.html
+    │
+    └───dashboard
+        ├───css
+        │       style.css
+        │
+        ├───html
+        │       index.html
+        │
+        └───js
+                script.js
+
+PS E:\project\vg_web> 
 
 khi sử dụng các icon cho web thì dùng các icon trơn, shape màu đồng nhất, không dùng emojj.
 mỗi  khi code phải ưu tiên code component và sử dụng để tránh việc code quá dài 
+mỗi  khi  dùng file test xong   thì  phải xóa đi.
+sau khi có xong  và kiểm thử hoàn tất thì phải đẩy lên git chạy lệnh git add . ; git commit  "nội dung" ; git push orgin main
