@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Hệ thống Quản lý</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../../component/common.css">
+    <link href="https://fonts.googleapis.com/css2?family=Times+New+Roman:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <div id="header-container"></div>
+
+    <!-- Navigation -->
+    <div id="navigation-container"></div>
+
+    <!-- Main Content -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>Menu Chính</h3>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active">
+                        <a href="#" class="nav-item">
+                            <span class="nav-icon"><i class="fas fa-tachometer-alt"></i></span>
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-item">
+                            <span class="nav-icon"><i class="fas fa-users"></i></span>
+                            <span class="nav-text">Quản lý Nhân sự</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-item">
+                            <span class="nav-icon"><i class="fas fa-clock"></i></span>
+                            <span class="nav-text">Quản lý Thời gian</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-item">
+                            <span class="nav-icon"><i class="fas fa-file-alt"></i></span>
+                            <span class="nav-text">Quản lý Tài liệu</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-item">
+                            <span class="nav-icon"><i class="fas fa-comments"></i></span>
+                            <span class="nav-text">Giao tiếp Nội bộ</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-item">
+                            <span class="nav-icon"><i class="fas fa-chart-bar"></i></span>
+                            <span class="nav-text">Báo cáo & Thống kê</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-item">
+                            <span class="nav-icon"><i class="fas fa-cog"></i></span>
+                            <span class="nav-text">Cài đặt Hệ thống</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Dashboard Content -->
+        <main class="main-content">
+            <div class="dashboard-header">
+                <h1>Dashboard</h1>
+                <p class="dashboard-subtitle">Tổng quan hệ thống quản lý</p>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-content">
+                        <h3>Nhân viên</h3>
+                        <p class="stat-number">1,247</p>
+                        <p class="stat-change positive">+12% so với tháng trước</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+                    <div class="stat-content">
+                        <h3>Ngày làm việc</h3>
+                        <p class="stat-number">22</p>
+                        <p class="stat-change">Tháng hiện tại</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+                    <div class="stat-content">
+                        <h3>Tài liệu</h3>
+                        <p class="stat-number">3,456</p>
+                        <p class="stat-change positive">+8% so với tháng trước</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-content">
+                        <h3>Hoàn thành</h3>
+                        <p class="stat-number">89%</p>
+                        <p class="stat-change positive">+5% so với tháng trước</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h2>Thao tác Nhanh</h2>
+                <div class="actions-grid">
+                    <button class="action-btn">
+                        <span class="action-icon"><i class="fas fa-user-plus"></i></span>
+                        <span class="action-text">Thêm Nhân viên</span>
+                    </button>
+                    <button class="action-btn">
+                        <span class="action-icon"><i class="fas fa-chart-line"></i></span>
+                        <span class="action-text">Tạo Báo cáo</span>
+                    </button>
+                    <button class="action-btn">
+                        <span class="action-icon"><i class="fas fa-calendar-alt"></i></span>
+                        <span class="action-text">Lịch Làm việc</span>
+                    </button>
+                    <button class="action-btn">
+                        <span class="action-icon"><i class="fas fa-download"></i></span>
+                        <span class="action-text">Xuất Dữ liệu</span>
+                    </button>
+                    <button class="action-btn">
+                        <span class="action-icon"><i class="fas fa-search"></i></span>
+                        <span class="action-text">Tìm kiếm</span>
+                    </button>
+                    <button class="action-btn">
+                        <span class="action-icon"><i class="fas fa-cog"></i></span>
+                        <span class="action-text">Cài đặt</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recent Activities -->
+            <div class="recent-activities">
+                <h2>Hoạt động Gần đây</h2>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon"><i class="fas fa-user-plus"></i></div>
+                        <div class="activity-content">
+                            <h4>Thêm nhân viên mới</h4>
+                            <p>Nguyễn Văn A đã được thêm vào hệ thống</p>
+                            <span class="activity-time">2 giờ trước</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon"><i class="fas fa-file-edit"></i></div>
+                        <div class="activity-content">
+                            <h4>Cập nhật tài liệu</h4>
+                            <p>Quy định nội bộ đã được cập nhật</p>
+                            <span class="activity-time">4 giờ trước</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon"><i class="fas fa-chart-bar"></i></div>
+                        <div class="activity-content">
+                            <h4>Báo cáo tháng</h4>
+                            <p>Báo cáo thống kê tháng 12 đã được tạo</p>
+                            <span class="activity-time">1 ngày trước</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="activity-content">
+                            <h4>Hoàn thành dự án</h4>
+                            <p>Dự án A đã được hoàn thành đúng tiến độ</p>
+                            <span class="activity-time">2 ngày trước</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Status -->
+            <div class="system-status">
+                <h2>Trạng thái Hệ thống</h2>
+                <div class="status-grid">
+                    <div class="status-item online">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Hệ thống chính</span>
+                    </div>
+                    <div class="status-item online">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Cơ sở dữ liệu</span>
+                    </div>
+                    <div class="status-item online">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Email server</span>
+                    </div>
+                    <div class="status-item online">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Backup system</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <script src="../../component/common.js"></script>
+    <script src="../js/script.js"></script>
+</body>
+</html> 

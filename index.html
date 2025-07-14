@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống Quản lý Doanh nghiệp - Cổng thông tin nội bộ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #1e3c72;
+            border: 3px solid #fff;
+        }
+
+        .title-section h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .title-section p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .header-right {
+            text-align: right;
+            font-size: 14px;
+        }
+
+        /* Navigation */
+        .nav {
+            background: #fff;
+            border-bottom: 3px solid #1e3c72;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            gap: 0;
+        }
+
+        .nav-item {
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .nav-item:last-child {
+            border-right: none;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 15px 25px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-link:hover {
+            background: #f8f9fa;
+            color: #1e3c72;
+            border-bottom-color: #1e3c72;
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            background: #fff;
+            padding: 20px;
+            border-left: 5px solid #1e3c72;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .page-title h2 {
+            color: #1e3c72;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .page-title p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        /* Service Grid */
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .service-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            border-color: #1e3c72;
+        }
+
+        .service-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .service-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .service-icon i {
+            font-size: 40px;
+        }
+
+        .service-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .service-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .service-body {
+            padding: 25px;
+        }
+
+        .service-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .service-btn {
+            display: inline-block;
+            background: #1e3c72;
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid #1e3c72;
+        }
+
+        .service-btn:hover {
+            background: #2a5298;
+            border-color: #2a5298;
+            transform: translateY(-2px);
+        }
+
+        /* Quick Access */
+        .quick-access {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .quick-access h3 {
+            color: #1e3c72;
+            font-size: 20px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        .quick-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .quick-link {
+            background: #f8f9fa;
+            color: #1e3c72;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-weight: 500;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quick-link i {
+            font-size: 16px;
+        }
+
+        .quick-link:hover {
+            background: #1e3c72;
+            color: white;
+            border-color: #1e3c72;
+        }
+
+        /* Footer */
+        .footer {
+            background: #333;
+            color: white;
+            padding: 30px 0;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .footer-info {
+            margin-bottom: 20px;
+        }
+
+        .footer-info p {
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .footer-links {
+            border-top: 1px solid #555;
+            padding-top: 20px;
+        }
+
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 14px;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .nav-list {
+                flex-direction: column;
+            }
+
+            .nav-item {
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .service-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-links {
+                flex-direction: column;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .nav, .footer {
+                display: none;
+            }
+            
+            .service-card {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo">VN</div>
+                <div class="title-section">
+                    <h1>HỆ THỐNG QUẢN LÝ DOANH NGHIỆP</h1>
+                    <p>Cổng thông tin nội bộ chính thức</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <p>Ngày: <span id="currentDate"></span></p>
+                <p>Giờ: <span id="currentTime"></span></p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-content">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Trang chủ</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Thông tin công ty</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Dịch vụ nội bộ</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Tài liệu công ty</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Liên hệ</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Page Title -->
+        <div class="page-title">
+            <h2>DỊCH VỤ NỘI BỘ TRỰC TUYẾN</h2>
+            <p>Chào mừng nhân viên đến với hệ thống quản lý doanh nghiệp. Vui lòng chọn dịch vụ cần thiết.</p>
+        </div>
+
+        <!-- Service Grid -->
+        <div class="service-grid">
+            <div class="service-card">
+                <div class="service-header">
+                    <div class="service-icon"><i class="fas fa-sign-in-alt"></i></div>
+                    <div class="service-title">ĐĂNG NHẬP HỆ THỐNG</div>
+                    <div class="service-subtitle">Truy cập vào hệ thống quản lý</div>
+                </div>
+                <div class="service-body">
+                    <p class="service-description">
+                        Đăng nhập vào hệ thống để sử dụng các dịch vụ quản lý nội bộ, 
+                        tra cứu thông tin và thực hiện các thủ tục công việc trực tuyến.
+                    </p>
+                    <a href="page/auth/login/html/index.html" class="service-btn">Đăng nhập ngay</a>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div class="service-header">
+                    <div class="service-icon"><i class="fas fa-key"></i></div>
+                    <div class="service-title">KHÔI PHỤC MẬT KHẨU</div>
+                    <div class="service-subtitle">Lấy lại quyền truy cập</div>
+                </div>
+                <div class="service-body">
+                    <p class="service-description">
+                        Khôi phục mật khẩu đăng nhập trong trường hợp quên hoặc mất. 
+                        Hệ thống sẽ gửi thông tin khôi phục qua email công ty.
+                    </p>
+                    <a href="page/auth/forgotpass/html/index.html" class="service-btn">Khôi phục mật khẩu</a>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div class="service-header">
+                    <div class="service-icon"><i class="fas fa-user-plus"></i></div>
+                    <div class="service-title">ĐĂNG KÝ TÀI KHOẢN</div>
+                    <div class="service-subtitle">Tạo tài khoản mới</div>
+                </div>
+                <div class="service-body">
+                    <p class="service-description">
+                        Đăng ký tài khoản mới cho nhân viên mới. 
+                        Quý khách cần cung cấp thông tin cá nhân và mã nhân viên để xác minh.
+                    </p>
+                    <a href="page/auth/register/html/index.html" class="service-btn">Đăng ký ngay</a>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div class="service-header">
+                    <div class="service-icon"><i class="fas fa-tachometer-alt"></i></div>
+                    <div class="service-title">BẢNG ĐIỀU KHIỂN</div>
+                    <div class="service-subtitle">Quản lý thông tin</div>
+                </div>
+                <div class="service-body">
+                    <p class="service-description">
+                        Truy cập vào bảng điều khiển để quản lý thông tin cá nhân, 
+                        xem lịch sử công việc và thực hiện các thao tác quản lý.
+                    </p>
+                    <a href="page/dashboard/html/index.html" class="service-btn">Truy cập</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Access -->
+        <div class="quick-access">
+            <h3>TRUY CẬP NHANH</h3>
+            <div class="quick-links">
+                <a href="page/auth/login/html/index.html" class="quick-link"><i class="fas fa-sign-in-alt"></i> Đăng nhập hệ thống</a>
+                <a href="page/auth/forgotpass/html/index.html" class="quick-link"><i class="fas fa-key"></i> Khôi phục mật khẩu</a>
+                <a href="#" class="quick-link"><i class="fas fa-question-circle"></i> Hướng dẫn sử dụng</a>
+                <a href="#" class="quick-link"><i class="fas fa-headset"></i> Liên hệ IT Support</a>
+                <a href="#" class="quick-link"><i class="fas fa-newspaper"></i> Tin tức công ty</a>
+                <a href="#" class="quick-link"><i class="fas fa-file-alt"></i> Tài liệu nội bộ</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-info">
+                <p><strong>HỆ THỐNG QUẢN LÝ DOANH NGHIỆP</strong></p>
+                <p>Địa chỉ: 123 Đường ABC, Quận XYZ, Thành phố HCM</p>
+                <p>Điện thoại: (028) 1234-5678 | Email: info@company.com</p>
+                <p>Giờ làm việc: Thứ 2 - Thứ 6 (8:00 - 17:00)</p>
+            </div>
+            <div class="footer-links">
+                <a href="#">Chính sách bảo mật</a>
+                <a href="#">Điều khoản sử dụng</a>
+                <a href="#">Sơ đồ trang web</a>
+                <a href="#">Liên hệ</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Hiển thị ngày giờ hiện tại
+        function updateDateTime() {
+            const now = new Date();
+            const dateOptions = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            const timeOptions = { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            };
+            
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('vi-VN', dateOptions);
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('vi-VN', timeOptions);
+        }
+
+        // Cập nhật mỗi giây
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        // Thêm hiệu ứng loading cho các link
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.href && this.href !== '#') {
+                    // Thêm class loading nếu cần
+                    this.style.opacity = '0.7';
+                    setTimeout(() => {
+                        this.style.opacity = '1';
+                    }, 200);
+                }
+            });
+        });
+
+        // Console log để debug
+        console.log('Hệ thống Quản lý Doanh nghiệp đã tải thành công!');
+        console.log('Phiên bản: 1.0.0 - Phong cách Doanh nghiệp Chuyên nghiệp');
+    </script>
+</body>
+</html>

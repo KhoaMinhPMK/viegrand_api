@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký tài khoản - Hệ thống Quản lý Doanh nghiệp</title>
+    <link rel="stylesheet" href="../../component/common.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <!-- Header Component -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo">VN</div>
+                <div class="title-section">
+                    <h1>HỆ THỐNG QUẢN LÝ DOANH NGHIỆP</h1>
+                    <p>Cổng thông tin nội bộ chính thức</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <p>Ngày: <span id="currentDate"></span></p>
+                <p>Giờ: <span id="currentTime"></span></p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Component -->
+    <nav class="nav">
+        <div class="nav-content">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="../../../index.html" class="nav-link">Trang chủ</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Thông tin công ty</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Dịch vụ nội bộ</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Tài liệu công ty</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Liên hệ</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="register-box">
+            <div class="register-header">
+                <div class="register-logo">📝</div>
+                <h1>ĐĂNG KÝ TÀI KHOẢN</h1>
+                <p>Vui lòng điền đầy đủ thông tin để tạo tài khoản mới</p>
+            </div>
+            
+            <form id="registerForm" class="register-form">
+                <!-- Thông tin cá nhân -->
+                <div class="form-section">
+                    <h3>THÔNG TIN CÁ NHÂN</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">Họ <span class="required">*</span></label>
+                            <input 
+                                type="text" 
+                                id="firstName" 
+                                name="firstName" 
+                                placeholder="Nhập họ"
+                                required
+                            >
+                            <span class="error-message" id="firstNameError"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="lastName">Tên <span class="required">*</span></label>
+                            <input 
+                                type="text" 
+                                id="lastName" 
+                                name="lastName" 
+                                placeholder="Nhập tên"
+                                required
+                            >
+                            <span class="error-message" id="lastNameError"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Địa chỉ Email <span class="required">*</span></label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="Nhập địa chỉ email công ty"
+                            required
+                        >
+                        <span class="error-message" id="emailError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Số điện thoại <span class="required">*</span></label>
+                        <input 
+                            type="tel" 
+                            id="phone" 
+                            name="phone" 
+                            placeholder="Nhập số điện thoại"
+                            required
+                        >
+                        <span class="error-message" id="phoneError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="employeeId">Mã nhân viên <span class="required">*</span></label>
+                        <input 
+                            type="text" 
+                            id="employeeId" 
+                            name="employeeId" 
+                            placeholder="Nhập mã nhân viên"
+                            required
+                        >
+                        <span class="error-message" id="employeeIdError"></span>
+                    </div>
+                </div>
+                
+                <!-- Thông tin đăng nhập -->
+                <div class="form-section">
+                    <h3>THÔNG TIN ĐĂNG NHẬP</h3>
+                    
+                    <div class="form-group">
+                        <label for="username">Tên đăng nhập <span class="required">*</span></label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            placeholder="Tạo tên đăng nhập"
+                            required
+                        >
+                        <span class="error-message" id="usernameError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Mật khẩu <span class="required">*</span></label>
+                        <div class="password-input">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="Tạo mật khẩu"
+                                required
+                            >
+                            <button type="button" id="togglePassword" class="toggle-password">
+                                <span class="eye-icon">👁️</span>
+                            </button>
+                        </div>
+                        <span class="error-message" id="passwordError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">Xác nhận mật khẩu <span class="required">*</span></label>
+                        <div class="password-input">
+                            <input 
+                                type="password" 
+                                id="confirmPassword" 
+                                name="confirmPassword" 
+                                placeholder="Nhập lại mật khẩu"
+                                required
+                            >
+                            <button type="button" id="toggleConfirmPassword" class="toggle-password">
+                                <span class="eye-icon">👁️</span>
+                            </button>
+                        </div>
+                        <span class="error-message" id="confirmPasswordError"></span>
+                    </div>
+                </div>
+                
+                <!-- Thông tin bổ sung -->
+                <div class="form-section">
+                    <h3>THÔNG TIN BỔ SUNG</h3>
+                    
+                    <div class="form-group">
+                        <label for="department">Phòng ban <span class="required">*</span></label>
+                        <select id="department" name="department" required>
+                            <option value="">Chọn phòng ban</option>
+                            <option value="it">Công nghệ thông tin</option>
+                            <option value="hr">Nhân sự</option>
+                            <option value="finance">Tài chính</option>
+                            <option value="marketing">Marketing</option>
+                            <option value="sales">Kinh doanh</option>
+                            <option value="operations">Vận hành</option>
+                            <option value="other">Khác</option>
+                        </select>
+                        <span class="error-message" id="departmentError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="position">Chức vụ <span class="required">*</span></label>
+                        <input 
+                            type="text" 
+                            id="position" 
+                            name="position" 
+                            placeholder="Nhập chức vụ"
+                            required
+                        >
+                        <span class="error-message" id="positionError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="startDate">Ngày bắt đầu làm việc <span class="required">*</span></label>
+                        <input 
+                            type="date" 
+                            id="startDate" 
+                            name="startDate" 
+                            required
+                        >
+                        <span class="error-message" id="startDateError"></span>
+                    </div>
+                </div>
+                
+                <!-- Điều khoản -->
+                <div class="form-section">
+                    <div class="form-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                            <span class="checkmark"></span>
+                            Tôi đồng ý với <a href="#" class="terms-link">Điều khoản sử dụng</a> và <a href="#" class="privacy-link">Chính sách bảo mật</a> <span class="required">*</span>
+                        </label>
+                        <span class="error-message" id="agreeTermsError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="agreeNewsletter" name="agreeNewsletter">
+                            <span class="checkmark"></span>
+                            Tôi muốn nhận thông báo và tin tức từ công ty
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="registerBtn">
+                        <span class="btn-text">ĐĂNG KÝ TÀI KHOẢN</span>
+                        <span class="loading-spinner" id="loadingSpinner"></span>
+                    </button>
+                    
+                    <a href="../login/html/index.html" class="btn btn-secondary">
+                        Đã có tài khoản? Đăng nhập
+                    </a>
+                </div>
+            </form>
+            
+            <div class="register-footer">
+                <p class="security-notice">
+                    <strong>Lưu ý bảo mật:</strong> Thông tin của bạn sẽ được bảo mật theo tiêu chuẩn quốc tế
+                </p>
+            </div>
+        </div>
+
+        <!-- Information Panel -->
+        <div class="info-panel">
+            <h3>HƯỚNG DẪN ĐĂNG KÝ</h3>
+            <div class="info-content">
+                <div class="info-item">
+                    <div class="info-icon">📋</div>
+                    <div class="info-text">
+                        <strong>Chuẩn bị thông tin:</strong><br>
+                        Mã nhân viên, email công ty, thông tin cá nhân
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">🔐</div>
+                    <div class="info-text">
+                        <strong>Mật khẩu mạnh:</strong><br>
+                        Tối thiểu 8 ký tự, bao gồm chữ hoa, chữ thường, số
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">⏰</div>
+                    <div class="info-text">
+                        <strong>Thời gian xử lý:</strong><br>
+                        Tài khoản sẽ được kích hoạt trong vòng 24 giờ
+                    </div>
+                </div>
+            </div>
+            
+            <div class="contact-info">
+                <h4>LIÊN HỆ HỖ TRỢ</h4>
+                <p>📞 IT Support: (028) 1234-5678</p>
+                <p>✉️ Email: support@company.com</p>
+                <p>🕒 Giờ làm việc: 8:00 - 17:00 (T2-T6)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Component -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-info">
+                <p><strong>HỆ THỐNG QUẢN LÝ DOANH NGHIỆP</strong></p>
+                <p>Địa chỉ: 123 Đường ABC, Quận XYZ, Thành phố HCM</p>
+                <p>Điện thoại: (028) 1234-5678 | Email: info@company.com</p>
+                <p>Giờ làm việc: Thứ 2 - Thứ 6 (8:00 - 17:00)</p>
+            </div>
+            <div class="footer-links">
+                <a href="#">Chính sách bảo mật</a>
+                <a href="#">Điều khoản sử dụng</a>
+                <a href="#">Sơ đồ trang web</a>
+                <a href="#">Liên hệ</a>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="../../component/common.js"></script>
+    <script src="../js/script.js"></script>
+</body>
+</html> 
