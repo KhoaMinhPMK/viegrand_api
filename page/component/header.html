@@ -13,4 +13,25 @@
             <p>Giờ: <span id="currentTime"></span></p>
         </div>
     </div>
-</header> 
+</header>
+<script>
+    // Hiển thị ngày giờ hiện tại (nếu chưa có)
+    function updateDateTimeHeader() {
+        const now = new Date();
+        const dateOptions = { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        };
+        const timeOptions = { 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            second: '2-digit' 
+        };
+        document.getElementById('currentDate').textContent = now.toLocaleDateString('vi-VN', dateOptions);
+        document.getElementById('currentTime').textContent = now.toLocaleTimeString('vi-VN', timeOptions);
+    }
+    updateDateTimeHeader();
+    setInterval(updateDateTimeHeader, 1000);
+</script>

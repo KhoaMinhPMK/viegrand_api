@@ -471,3 +471,12 @@ startDateInput.setAttribute('max', today);
 // Console log để debug
 console.log('Trang đăng ký tài khoản đã tải thành công!');
 console.log('Sử dụng CommonUtils từ component/common.js'); 
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Load header component
+    fetch('../../../component/header.html')
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById('header-container').innerHTML = html;
+        });
+}); 
