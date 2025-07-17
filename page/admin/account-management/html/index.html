@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Tài khoản - Hệ thống Quản lý Doanh nghiệp</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../../component/common.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <!-- Header Component -->
+    <div id="header-container"></div>
+
+    <!-- Navigation Component -->
+    <div id="nav-container"></div>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <div class="page-header">
+            <h1>QUẢN LÝ TÀI KHOẢN</h1>
+            <div class="breadcrumb">
+                <a href="../../../index.html">Trang chủ</a> / 
+                <a href="../dashboard/html/index.html">Quản trị</a> / 
+                <span>Quản lý Tài khoản</span>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Tìm kiếm tài khoản...">
+                <button id="searchButton"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="filter-box">
+                <select id="statusFilter">
+                    <option value="all">Tất cả trạng thái</option>
+                    <option value="pending">Chờ duyệt</option>
+                    <option value="active">Đang hoạt động</option>
+                    <option value="inactive">Đã vô hiệu</option>
+                </select>
+                <select id="departmentFilter">
+                    <option value="all">Tất cả phòng ban</option>
+                    <option value="it">Công nghệ thông tin</option>
+                    <option value="hr">Nhân sự</option>
+                    <option value="finance">Tài chính</option>
+                    <option value="marketing">Marketing</option>
+                    <option value="sales">Kinh doanh</option>
+                    <option value="operations">Vận hành</option>
+                </select>
+                <button id="refreshButton" class="icon-button" title="Làm mới danh sách">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Account Summary -->
+        <div class="summary-cards">
+            <div class="summary-card pending">
+                <div class="summary-icon">
+                    <i class="fas fa-user-clock"></i>
+                </div>
+                <div class="summary-content">
+                    <h3>Chờ duyệt</h3>
+                    <p id="pendingCount">0</p>
+                </div>
+            </div>
+            <div class="summary-card active">
+                <div class="summary-icon">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div class="summary-content">
+                    <h3>Đang hoạt động</h3>
+                    <p id="activeCount">0</p>
+                </div>
+            </div>
+            <div class="summary-card inactive">
+                <div class="summary-icon">
+                    <i class="fas fa-user-slash"></i>
+                </div>
+                <div class="summary-content">
+                    <h3>Đã vô hiệu</h3>
+                    <p id="inactiveCount">0</p>
+                </div>
+            </div>
+            <div class="summary-card total">
+                <div class="summary-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="summary-content">
+                    <h3>Tổng số</h3>
+                    <p id="totalCount">0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="data-table-container">
+            <table class="data-table" id="accountsTable">
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="selectAll">
+                        </th>
+                        <th>Mã NV</th>
+                        <th>Họ tên</th>
+                        <th>Email</th>
+                        <th>Phòng ban</th>
+                        <th>Ngày đăng ký</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="accountsTableBody">
+                    <!-- Dữ liệu sẽ được thêm bằng JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container">
+            <div class="pagination-info">
+                Hiển thị <span id="currentRange">0-0</span> của <span id="totalItems">0</span> tài khoản
+            </div>
+            <div class="pagination-controls">
+                <button id="prevPage" disabled><i class="fas fa-chevron-left"></i></button>
+                <div id="pageNumbers" class="page-numbers">
+                    <!-- Số trang sẽ được thêm bằng JavaScript -->
+                </div>
+                <button id="nextPage" disabled><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="pagination-size">
+                <label for="pageSize">Hiển thị:</label>
+                <select id="pageSize">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </div>
+        </div>
+    </main>
+
+    <!-- Action Modal -->
+    <div id="actionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Chi tiết tài khoản</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="accountDetailsForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="employeeId">Mã nhân viên</label>
+                            <input type="text" id="employeeId" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Trạng thái</label>
+                            <select id="status">
+                                <option value="pending">Chờ duyệt</option>
+                                <option value="active">Đang hoạt động</option>
+                                <option value="inactive">Đã vô hiệu</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">Họ</label>
+                            <input type="text" id="firstName">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Tên</label>
+                            <input type="text" id="lastName">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">Số điện thoại</label>
+                            <input type="tel" id="phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="department">Phòng ban</label>
+                            <select id="department">
+                                <option value="it">Công nghệ thông tin</option>
+                                <option value="hr">Nhân sự</option>
+                                <option value="finance">Tài chính</option>
+                                <option value="marketing">Marketing</option>
+                                <option value="sales">Kinh doanh</option>
+                                <option value="operations">Vận hành</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="position">Chức vụ</label>
+                            <input type="text" id="position">
+                        </div>
+                        <div class="form-group">
+                            <label for="startDate">Ngày bắt đầu</label>
+                            <input type="date" id="startDate">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username">Tên đăng nhập</label>
+                        <input type="text" id="username" readonly>
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <label>Tùy chọn</label>
+                        <div class="checkbox-container">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="resetPassword">
+                                Đặt lại mật khẩu
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group notes-group">
+                        <label for="notes">Ghi chú</label>
+                        <textarea id="notes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="account-history">
+                    <button type="button" id="viewHistoryBtn" class="secondary-btn">
+                        <i class="fas fa-history"></i> Xem lịch sử
+                    </button>
+                </div>
+                <div class="action-buttons">
+                    <button type="button" id="deleteAccountBtn" class="danger-btn">
+                        <i class="fas fa-trash-alt"></i> Xóa
+                    </button>
+                    <button type="button" id="saveAccountBtn" class="primary-btn">
+                        <i class="fas fa-save"></i> Lưu thay đổi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content confirmation-content">
+            <div class="modal-header">
+                <h2 id="confirmationTitle">Xác nhận</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="confirmationMessage">Bạn có chắc chắn muốn thực hiện hành động này?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="cancelActionBtn" class="secondary-btn">Hủy</button>
+                <button type="button" id="confirmActionBtn" class="primary-btn">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Action Menu -->
+    <div id="bulkActionMenu" class="bulk-action-menu">
+        <p><span id="selectedCount">0</span> mục đã chọn</p>
+        <button id="approveSelectedBtn" class="bulk-action-btn">
+            <i class="fas fa-check"></i> Duyệt
+        </button>
+        <button id="deactivateSelectedBtn" class="bulk-action-btn">
+            <i class="fas fa-ban"></i> Vô hiệu hóa
+        </button>
+        <button id="deleteSelectedBtn" class="bulk-action-btn">
+            <i class="fas fa-trash"></i> Xóa
+        </button>
+        <button id="cancelSelectionBtn" class="bulk-action-btn cancel">
+            <i class="fas fa-times"></i> Hủy
+        </button>
+    </div>
+
+    <!-- Footer Component -->
+    <div id="footer-container"></div>
+
+    <!-- Scripts -->
+    <script src="../../../component/common.js"></script>
+    <script src="../../../api_client/admin.js"></script>
+    <script src="../js/script.js"></script>
+</body>
+</html>
