@@ -22,7 +22,7 @@ async function getEmployees(filters = {}, page = 1, limit = 10) {
             limit: limit
         }).toString();
         
-        const response = await fetch(`/api/employees.php?${queryParams}`, {
+        const response = await fetch(`/manager/api/employees.php?${queryParams}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -51,7 +51,7 @@ async function getEmployeeById(employeeId) {
             return { success: false, message: 'Bạn chưa đăng nhập' };
         }
         
-        const response = await fetch(`/api/employees.php?id=${employeeId}`, {
+        const response = await fetch(`/manager/api/employees.php?id=${employeeId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -80,7 +80,7 @@ async function createEmployee(employeeData) {
             return { success: false, message: 'Bạn chưa đăng nhập' };
         }
         
-        const response = await fetch('/api/employees.php', {
+        const response = await fetch('/manager/api/employees.php', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -112,7 +112,7 @@ async function updateEmployee(employeeId, employeeData) {
             return { success: false, message: 'Bạn chưa đăng nhập' };
         }
         
-        const response = await fetch(`/api/employees.php?id=${employeeId}`, {
+        const response = await fetch(`/manager/api/employees.php?id=${employeeId}`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -143,7 +143,7 @@ async function deleteEmployee(employeeId) {
             return { success: false, message: 'Bạn chưa đăng nhập' };
         }
         
-        const response = await fetch(`/api/employees.php?id=${employeeId}`, {
+        const response = await fetch(`/manager/api/employees.php?id=${employeeId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,

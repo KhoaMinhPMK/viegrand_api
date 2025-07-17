@@ -13,7 +13,7 @@ async function getDashboardData() {
             return { success: false, message: 'Bạn chưa đăng nhập' };
         }
         
-        const response = await fetch('/api/dashboard.php', {
+        const response = await fetch('/manager/api/dashboard.php', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`

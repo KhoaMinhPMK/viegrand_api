@@ -13,7 +13,7 @@ async function getProfile() {
             return { success: false, message: 'Bạn chưa đăng nhập' };
         }
         
-        const response = await fetch('/api/profile.php', {
+        const response = await fetch('/manager/api/profile.php', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -42,7 +42,7 @@ async function updateProfile(profileData) {
             return { success: false, message: 'Bạn chưa đăng nhập' };
         }
         
-        const response = await fetch('/api/update_profile.php', {
+        const response = await fetch('/manager/api/update_profile.php', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -73,7 +73,7 @@ async function changePassword(passwordData) {
             return { success: false, message: 'Bạn chưa đăng nhập' };
         }
         
-        const response = await fetch('/api/update_profile.php', {
+        const response = await fetch('/manager/api/update_profile.php', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,

@@ -142,9 +142,9 @@ function validateForm() {
     let isValid = true;
     
     // Validate firstName
-    const firstNameError = validateName(firstNameInput.value, 'Họ');
-    if (firstNameError) {
-        showError(firstNameError, firstNameError);
+    const firstNameErrorMsg = validateName(firstNameInput.value, 'Họ');
+    if (firstNameErrorMsg) {
+        showError(firstNameError, firstNameErrorMsg);
         addErrorClass(firstNameInput);
         isValid = false;
     } else {
@@ -153,9 +153,9 @@ function validateForm() {
     }
     
     // Validate lastName
-    const lastNameError = validateName(lastNameInput.value, 'Tên');
-    if (lastNameError) {
-        showError(lastNameError, lastNameError);
+    const lastNameErrorMsg = validateName(lastNameInput.value, 'Tên');
+    if (lastNameErrorMsg) {
+        showError(lastNameError, lastNameErrorMsg);
         addErrorClass(lastNameInput);
         isValid = false;
     } else {
@@ -184,9 +184,9 @@ function validateForm() {
     }
     
     // Validate employee ID
-    const employeeIdError = validateEmployeeId(employeeIdInput.value);
-    if (employeeIdError) {
-        showError(employeeIdError, employeeIdError);
+    const employeeIdErrorMsg = validateEmployeeId(employeeIdInput.value);
+    if (employeeIdErrorMsg) {
+        showError(employeeIdError, employeeIdErrorMsg);
         addErrorClass(employeeIdInput);
         isValid = false;
     } else {
@@ -195,9 +195,9 @@ function validateForm() {
     }
     
     // Validate username
-    const usernameError = validateUsername(usernameInput.value);
-    if (usernameError) {
-        showError(usernameError, usernameError);
+    const usernameErrorMsg = validateUsername(usernameInput.value);
+    if (usernameErrorMsg) {
+        showError(usernameError, usernameErrorMsg);
         addErrorClass(usernameInput);
         isValid = false;
     } else {
@@ -247,9 +247,9 @@ function validateForm() {
     }
     
     // Validate start date
-    const startDateError = validateDate(startDateInput.value);
-    if (startDateError) {
-        showError(startDateError, startDateError);
+    const startDateErrorMsg = validateDate(startDateInput.value);
+    if (startDateErrorMsg) {
+        showError(startDateError, startDateErrorMsg);
         addErrorClass(startDateInput);
         isValid = false;
     } else {
@@ -270,31 +270,25 @@ function validateForm() {
 
 // Hàm mô phỏng đăng ký (thay thế bằng API thực tế)
 async function performRegistration(formData) {
-    // Mô phỏng delay network
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    // Mô phỏng kiểm tra dữ liệu
-    const existingEmails = ['admin@company.com', 'user@company.com'];
-    const existingUsernames = ['admin', 'user'];
-    const existingEmployeeIds = ['NV0001', 'NV0002'];
-    
-    if (existingEmails.includes(formData.email)) {
-        throw new Error('Email đã được sử dụng');
+    try {
+        // Thêm confirmPassword vào formData
+        formData.confirmPassword = confirmPasswordInput.value;
+        formData.agreeTerms = agreeTermsCheckbox.checked ? 1 : 0;
+        
+        // Gọi API đăng ký nhân viên thực tế
+        const result = await registerEmployee(formData);
+        
+        if (!result.success) {
+            throw new Error(result.message || 'Đã xảy ra lỗi khi đăng ký');
+        }
+        
+        return {
+            success: true,
+            message: result.message || 'Đăng ký thành công! Tài khoản sẽ được kích hoạt trong vòng 24 giờ.'
+        };
+    } catch (error) {
+        throw new Error(error.message || 'Đã xảy ra lỗi khi đăng ký');
     }
-    
-    if (existingUsernames.includes(formData.username)) {
-        throw new Error('Tên đăng nhập đã tồn tại');
-    }
-    
-    if (existingEmployeeIds.includes(formData.employeeId)) {
-        throw new Error('Mã nhân viên đã tồn tại');
-    }
-    
-    return { 
-        success: true, 
-        message: 'Đăng ký thành công! Tài khoản sẽ được kích hoạt trong vòng 24 giờ.',
-        userId: 'USR' + Date.now()
-    };
 }
 
 // Hàm xử lý đăng ký thành công
@@ -306,7 +300,7 @@ function handleRegistrationSuccess(data) {
     
     // Chuyển hướng sau 3 giây
     setTimeout(() => {
-        window.location.href = '../login/html/index.html';
+        window.location.href = '../../login/html/index.html';
     }, 3000);
 }
 

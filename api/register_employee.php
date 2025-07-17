@@ -62,9 +62,12 @@ if ($stmt->num_rows > 0) {
 }
 $stmt->close();
 
+// Mã hóa mật khẩu trước khi lưu
+$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
 // Thêm mới nhân viên
 $stmt = $conn->prepare('INSERT INTO employees (first_name, last_name, email, phone, employee_id, username, password, department, position, start_date, agree_terms, agree_newsletter) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-$stmt->bind_param('ssssssssssis', $firstName, $lastName, $email, $phone, $employeeId, $username, $password, $department, $position, $startDate, $agreeTerms, $agreeNewsletter);
+$stmt->bind_param('ssssssssssis', $firstName, $lastName, $email, $phone, $employeeId, $username, $hashedPassword, $department, $position, $startDate, $agreeTerms, $agreeNewsletter);
 if ($stmt->execute()) {
     echo json_encode(['success' => true, 'message' => 'Đăng ký thành công']);
 } else {

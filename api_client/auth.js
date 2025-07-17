@@ -9,7 +9,7 @@
  */
 async function register(userData) {
     try {
-        const response = await fetch('/api/register.php', {
+        const response = await fetch('/manager/api/register.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -36,7 +36,7 @@ async function register(userData) {
  */
 async function login(email, password, rememberMe = false) {
     try {
-        const response = await fetch('/api/login.php', {
+        const response = await fetch('/manager/api/login.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -65,7 +65,7 @@ async function login(email, password, rememberMe = false) {
  */
 async function forgotPassword(email) {
     try {
-        const response = await fetch('/api/forgot_password.php', {
+        const response = await fetch('/manager/api/forgot_password.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -90,7 +90,7 @@ async function forgotPassword(email) {
  */
 async function resetPassword(resetData) {
     try {
-        const response = await fetch('/api/reset_password.php', {
+        const response = await fetch('/manager/api/reset_password.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -115,7 +115,7 @@ async function resetPassword(resetData) {
 async function logout() {
     try {
         const token = localStorage.getItem('auth_token');
-        const response = await fetch('/api/logout.php', {
+        const response = await fetch('/manager/api/logout.php', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`

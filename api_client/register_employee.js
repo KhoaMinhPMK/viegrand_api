@@ -4,12 +4,12 @@
 
 /**
  * Đăng ký nhân viên mới
- * @param {Object} data - { email, password, fullname, phone }
+ * @param {Object} data - { firstName, lastName, email, phone, employeeId, username, password, confirmPassword, department, position, startDate, agreeTerms, agreeNewsletter }
  * @returns {Promise<Object>} - Kết quả trả về từ API
  */
 async function registerEmployee(data) {
     try {
-        const response = await fetch('/api/register_employee.php', {
+        const response = await fetch('/manager/api/register_employee.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
