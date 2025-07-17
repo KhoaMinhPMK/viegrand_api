@@ -132,30 +132,53 @@ async function loadAccountsFromAPI() {
             department: departmentFilter !== 'all' ? departmentFilter : null
         };
         
+        console.log('Fetching accounts with filters:', filters);
+        
         // Gọi API để lấy dữ liệu
         const result = await getAccounts(filters);
         
+        console.log('API result:', result);
+        
         if (result.success) {
             // Cập nhật dữ liệu
-            accounts = result.accounts;
+            accounts = result.accounts || [];
             filteredAccounts = [...accounts];
             
+            console.log('Loaded accounts:', accounts);
+            
             // Cập nhật thông tin phân trang
-            currentPage = result.pagination.page;
-            pageSize = result.pagination.pageSize;
+            currentPage = result.pagination ? result.pagination.page : 1;
+            pageSize = result.pagination ? result.pagination.pageSize : 10;
             
             // Cập nhật số lượng tài khoản
-            updateSummaryCardsWithData(result.counts);
+            if (result.counts) {
+                updateSummaryCardsWithData(result.counts);
+            } else {
+                updateSummaryCards(); // Sử dụng phương thức cũ nếu không có counts
+            }
             
             // Cập nhật giao diện
             updateUI();
         } else {
             // Hiển thị thông báo lỗi
+            console.error('API Error:', result.message);
             alert('Lỗi khi tải dữ liệu: ' + result.message);
         }
     } catch (error) {
         console.error('Lỗi khi tải dữ liệu:', error);
-        alert('Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại sau.');
+        
+        // Hiển thị thông tin lỗi chi tiết để debug
+        console.log('Error stack:', error.stack);
+        alert('Đã xảy ra lỗi khi tải dữ liệu: ' + error.message);
+        
+        // Hiển thị dữ liệu mẫu nếu không thể kết nối API
+        accounts = generateDemoData();
+        filteredAccounts = [...accounts];
+        updateSummaryCards();
+        updateUI();
+        
+        // Hiển thị thông báo về việc đang sử dụng dữ liệu mẫu
+        showNotification('Không thể kết nối đến API. Đang hiển thị dữ liệu mẫu.', 'warning');
     } finally {
         // Ẩn indicator loading
         showLoading(false);
@@ -1011,6 +1034,42 @@ function showNotification(message, type = 'info') {
     
     // Fallback nếu không có CommonUtils
     alert(message);
+}
+
+// Tạo dữ liệu mẫu để demo khi không có kết nối API
+function generateDemoData() {
+    console.log('Generating demo data...');
+    
+    // Tạo một mảng dữ liệu mẫu với 20 nhân viên
+    const demoAccounts = [];
+    const departments = ['IT', 'Nhân sự', 'Kế toán', 'Marketing', 'Kinh doanh', 'Sản xuất'];
+    const positions = ['Nhân viên', 'Trưởng nhóm', 'Quản lý', 'Giám đốc'];
+    const statuses = ['pending', 'active', 'inactive'];
+    
+    for (let i = 1; i <= 20; i++) {
+        const department = departments[Math.floor(Math.random() * departments.length)];
+        const position = positions[Math.floor(Math.random() * positions.length)];
+        const status = statuses[Math.floor(Math.random() * statuses.length)];
+        
+        demoAccounts.push({
+            id: i,
+            employeeId: 'EMP' + String(i).padStart(4, '0'),
+            firstName: 'Họ' + i,
+            lastName: 'Tên' + i,
+            email: `nhanvien${i}@example.com`,
+            phone: `098${String(Math.floor(1000000 + Math.random() * 9000000)).substring(0, 7)}`,
+            department: department,
+            position: position,
+            startDate: '2023-01-01',
+            registrationDate: '2023-01-01 08:00:00',
+            status: status,
+            notes: 'Đây là dữ liệu mẫu',
+            username: `user${i}`
+        });
+    }
+    
+    console.log('Demo data generated:', demoAccounts);
+    return demoAccounts;
 }
 
 // Export các hàm để có thể gọi từ HTML

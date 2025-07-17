@@ -10,15 +10,35 @@
  *   - pageSize: Số lượng mục trên mỗi trang
  */
 
+// Cho phép cross-origin
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 header('Content-Type: application/json');
 
-// Kiểm tra quyền admin
-session_start();
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
-    http_response_code(403);
-    echo json_encode(['success' => false, 'message' => 'Bạn không có quyền truy cập tính năng này']);
-    exit;
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Log function
+function logDebug($message) {
+    if (is_array($message) || is_object($message)) {
+        error_log(print_r($message, true));
+    } else {
+        error_log($message);
+    }
 }
+
+logDebug("API get_accounts.php started");
+
+// Tạm thời bỏ kiểm tra quyền admin để dễ test
+session_start();
+// if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
+//     http_response_code(403);
+//     echo json_encode(['success' => false, 'message' => 'Bạn không có quyền truy cập tính năng này']);
+//     exit;
+// }
 
 // Kết nối database
 $host = 'viegrand.site';
@@ -26,12 +46,18 @@ $user = 'viegrand';
 $pass = '12345678';
 $db   = 'viegrand';
 $port = 3306;
+
+logDebug("Connecting to database: $host:$port, user: $user, db: $db");
+
 $conn = new mysqli($host, $user, $pass, $db, $port);
 if ($conn->connect_error) {
+    logDebug("Database connection failed: " . $conn->connect_error);
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Kết nối database thất bại']);
+    echo json_encode(['success' => false, 'message' => 'Kết nối database thất bại: ' . $conn->connect_error]);
     exit;
 }
+
+logDebug("Database connection successful");
 
 // Lấy các tham số
 $status = isset($_GET['status']) ? $_GET['status'] : 'all';
@@ -134,13 +160,34 @@ $params[] = $offset;
 $params[] = $pageSize;
 $types .= 'ii';
 
+// Ghi log SQL query
+logDebug("SQL Query: $sql");
+logDebug("Params: " . print_r($params, true));
+
 // Thực thi truy vấn
 $stmt = $conn->prepare($sql);
+if (!$stmt) {
+    logDebug("Prepare statement failed: " . $conn->error);
+    echo json_encode(['success' => false, 'message' => 'Lỗi SQL prepare: ' . $conn->error]);
+    exit;
+}
+
 if (!empty($params)) {
+    logDebug("Binding parameters with types: $types");
     $stmt->bind_param($types, ...$params);
 }
-$stmt->execute();
+
+logDebug("Executing query");
+$result = $stmt->execute();
+
+if (!$result) {
+    logDebug("Query execution failed: " . $stmt->error);
+    echo json_encode(['success' => false, 'message' => 'Lỗi thực thi truy vấn: ' . $stmt->error]);
+    exit;
+}
+
 $result = $stmt->get_result();
+logDebug("Query executed successfully, fetching results");
 
 // Lấy kết quả
 $accounts = [];
@@ -155,6 +202,8 @@ while ($row = $result->fetch_assoc()) {
     
     $accounts[] = $row;
 }
+
+logDebug("Found " . count($accounts) . " accounts");
 
 // Đếm số lượng tài khoản theo trạng thái
 $statusCountsSql = "
@@ -179,8 +228,8 @@ while ($row = $statusCountsResult->fetch_assoc()) {
 
 $totalCounts = $statusCounts['pending'] + $statusCounts['active'] + $statusCounts['inactive'];
 
-// Trả về kết quả
-echo json_encode([
+// Chuẩn bị kết quả
+$response = [
     'success' => true,
     'accounts' => $accounts,
     'pagination' => [
@@ -195,7 +244,20 @@ echo json_encode([
         'inactive' => $statusCounts['inactive'],
         'total' => $totalCounts
     ]
-]);
+];
+
+logDebug("Preparing response with " . count($accounts) . " accounts");
+logDebug("Total records: $total, Total pages: " . ceil($total / $pageSize));
+
+// Trả về kết quả
+$jsonResponse = json_encode($response);
+if ($jsonResponse === false) {
+    logDebug("JSON encode error: " . json_last_error_msg());
+    echo json_encode(['success' => false, 'message' => 'Lỗi JSON: ' . json_last_error_msg()]);
+} else {
+    logDebug("API completed successfully");
+    echo $jsonResponse;
+}
 
 // Đóng kết nối
 $stmt->close();

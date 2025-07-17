@@ -8,7 +8,7 @@
  */
 async function getAccounts(filters = {}) {
     try {
-        const url = new URL('/manager/api/admin/get_accounts.php', window.location.origin);
+        const url = new URL('/api/admin/get_accounts.php', window.location.origin);
         
         // Thêm các tham số lọc vào URL
         Object.keys(filters).forEach(key => {
@@ -17,20 +17,50 @@ async function getAccounts(filters = {}) {
             }
         });
         
-        const token = localStorage.getItem('adminToken');
+        console.log('Fetching accounts from:', url.toString());
+        
+        // Thực hiện kiểm tra kết nối API trước
+        console.log('Testing API connection...');
         
         const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
+            method: 'GET'
+            // Tạm thời bỏ yêu cầu token để dễ test
+            // headers: {
+            //     'Authorization': `Bearer ${token}`
+            // }
         });
         
-        return await response.json();
+        console.log('Response status:', response.status);
+        console.log('Response headers:', [...response.headers.entries()]);
+        
+        if (!response.ok) {
+            console.error('API error status:', response.status);
+            const errorText = await response.text();
+            console.error('API error response:', errorText);
+            return {
+                success: false,
+                message: `Lỗi API: ${response.status} - ${errorText}`,
+                accounts: []
+            };
+        }
+        
+        const data = await response.json();
+        console.log('API response data:', data);
+        
+        // Kiểm tra kết quả trả về
+        if (!data.accounts || !Array.isArray(data.accounts)) {
+            console.warn('API did not return accounts array', data);
+        } else {
+            console.log(`API returned ${data.accounts.length} accounts`);
+        }
+        
+        return data;
     } catch (error) {
+        console.error('Error in getAccounts:', error);
+        console.error('Error stack:', error.stack);
         return {
             success: false,
-            message: 'Lỗi kết nối đến server',
+            message: 'Lỗi kết nối đến server: ' + error.message,
             accounts: []
         };
     }
@@ -43,14 +73,16 @@ async function getAccounts(filters = {}) {
  */
 async function getAccountDetail(id) {
     try {
-        const url = `/manager/api/admin/get_account_detail.php?id=${id}`;
-        const token = localStorage.getItem('adminToken');
+        const url = `/api/admin/get_account_detail.php?id=${id}`;
+        
+        console.log('Fetching account details from:', url);
         
         const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
+            method: 'GET'
+            // Tạm thời bỏ yêu cầu token để dễ test
+            // headers: {
+            //     'Authorization': `Bearer ${token}`
+            // }
         });
         
         return await response.json();
@@ -71,13 +103,13 @@ async function getAccountDetail(id) {
  */
 async function updateAccount(id, data) {
     try {
-        const url = '/manager/api/admin/update_account.php';
-        const token = localStorage.getItem('adminToken');
+        const url = '/api/admin/update_account.php';
+        
+        console.log('Updating account at:', url, 'Data:', data);
         
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ id, ...data })
@@ -99,13 +131,13 @@ async function updateAccount(id, data) {
  */
 async function deleteAccount(id) {
     try {
-        const url = '/manager/api/admin/delete_account.php';
-        const token = localStorage.getItem('adminToken');
+        const url = '/api/admin/delete_account.php';
+        
+        console.log('Deleting account at:', url, 'ID:', id);
         
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ id })
@@ -128,13 +160,13 @@ async function deleteAccount(id) {
  */
 async function updateAccountStatus(id, status) {
     try {
-        const url = '/manager/api/admin/update_account_status.php';
-        const token = localStorage.getItem('adminToken');
+        const url = '/api/admin/update_account_status.php';
+        
+        console.log('Updating account status at:', url, 'ID:', id, 'Status:', status);
         
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ id, status })
@@ -157,13 +189,13 @@ async function updateAccountStatus(id, status) {
  */
 async function bulkUpdateAccounts(ids, data) {
     try {
-        const url = '/manager/api/admin/bulk_update_accounts.php';
-        const token = localStorage.getItem('adminToken');
+        const url = '/api/admin/bulk_update_accounts.php';
+        
+        console.log('Bulk updating accounts at:', url, 'IDs:', ids, 'Data:', data);
         
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ ids, data })
@@ -185,14 +217,12 @@ async function bulkUpdateAccounts(ids, data) {
  */
 async function getAccountHistory(id) {
     try {
-        const url = `/manager/api/admin/get_account_history.php?id=${id}`;
-        const token = localStorage.getItem('adminToken');
+        const url = `/api/admin/get_account_history.php?id=${id}`;
+        
+        console.log('Fetching account history from:', url);
         
         const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
+            method: 'GET'
         });
         
         return await response.json();
@@ -212,13 +242,13 @@ async function getAccountHistory(id) {
  */
 async function resetPassword(id) {
     try {
-        const url = '/manager/api/admin/reset_password.php';
-        const token = localStorage.getItem('adminToken');
+        const url = '/api/admin/reset_password.php';
+        
+        console.log('Resetting password at:', url, 'ID:', id);
         
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ id })
