@@ -27,9 +27,36 @@ function updateDateTime() {
     });
 }
 
-// Cập nhật mỗi giây
-updateDateTime();
-setInterval(updateDateTime, 1000);
+// Document Ready function
+document.addEventListener('DOMContentLoaded', function() {
+    // Thêm hiệu ứng loading cho các link
+    document.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            if (this.href && this.href !== '#') {
+                // Thêm hiệu ứng opacity khi click
+                this.style.opacity = '0.7';
+                setTimeout(() => {
+                    this.style.opacity = '1';
+                }, 200);
+            }
+        });
+    });
+    
+    // Theo dõi khi header được nạp hoàn tất
+    const headerLoadCheckInterval = setInterval(function() {
+        if (document.querySelector('#currentDate') && document.querySelector('#currentTime')) {
+            // Cập nhật ngày giờ
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            clearInterval(headerLoadCheckInterval);
+            console.log('Đã khởi tạo đồng hồ thành công');
+        }
+    }, 100);
+    
+    // Console log để debug
+    console.log('Hệ thống Quản lý Doanh nghiệp đã tải thành công!');
+    console.log('Phiên bản: 1.0.0 - Phong cách Doanh nghiệp Chuyên nghiệp');
+});
 
 // Hàm hiển thị thông báo
 function showNotification(message, type = 'info') {

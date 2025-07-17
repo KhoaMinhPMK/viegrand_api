@@ -5,47 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng nhập hệ thống - Hệ thống Quản lý Doanh nghiệp</title>
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../../../component/common.css">
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-content">
-            <div class="logo-section">
-                <div class="logo">VN</div>
-                <div class="title-section">
-                    <h1>HỆ THỐNG QUẢN LÝ DOANH NGHIỆP</h1>
-                    <p>Cổng thông tin nội bộ chính thức</p>
-                </div>
-            </div>
-            <div class="header-right">
-                <p>Ngày: <span id="currentDate"></span></p>
-                <p>Giờ: <span id="currentTime"></span></p>
-            </div>
-        </div>
-    </header>
+    <!-- Header Component -->
+    <div id="header-container"></div>
 
-    <!-- Navigation -->
-    <nav class="nav">
-        <div class="nav-content">
-            <ul class="nav-list">
-                <li class="nav-item">
-                    <a href="../../../../index.html" class="nav-link">Trang chủ</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">Thông tin công ty</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">Dịch vụ nội bộ</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">Tài liệu công ty</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">Liên hệ</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+    <!-- Navigation Component -->
+    <div id="nav-container"></div>
 
     <div class="container">
         <div class="login-box">
@@ -155,6 +122,7 @@
         </div>
     </footer>
     
+    <script src="../../../component/common.js"></script>
     <script src="../js/script.js"></script>
 </body>
 </html>

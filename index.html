@@ -5,115 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ thống Quản lý Doanh nghiệp - Cổng thông tin nội bộ</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="page/component/common.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Times New Roman', serif;
-            background: #f5f5f5;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            padding: 20px 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo {
-            width: 60px;
-            height: 60px;
-            background: #fff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: #1e3c72;
-            border: 3px solid #fff;
-        }
-
-        .title-section h1 {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .title-section p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        .header-right {
-            text-align: right;
-            font-size: 14px;
-        }
-
-        /* Navigation */
-        .nav {
-            background: #fff;
-            border-bottom: 3px solid #1e3c72;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .nav-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .nav-list {
-            list-style: none;
-            display: flex;
-            gap: 0;
-        }
-
-        .nav-item {
-            border-right: 1px solid #e0e0e0;
-        }
-
-        .nav-item:last-child {
-            border-right: none;
-        }
-
-        .nav-link {
-            display: block;
-            padding: 15px 25px;
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
-        }
-
-        .nav-link:hover {
-            background: #f8f9fa;
-            color: #1e3c72;
-            border-bottom-color: #1e3c72;
-        }
 
         /* Main Content */
         .main {
@@ -346,45 +239,11 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-content">
-            <div class="logo-section">
-                <div class="logo">VN</div>
-                <div class="title-section">
-                    <h1>HỆ THỐNG QUẢN LÝ DOANH NGHIỆP</h1>
-                    <p>Cổng thông tin nội bộ chính thức</p>
-                </div>
-            </div>
-            <div class="header-right">
-                <p>Ngày: <span id="currentDate"></span></p>
-                <p>Giờ: <span id="currentTime"></span></p>
-            </div>
-        </div>
-    </header>
+    <!-- Header Component -->
+    <div id="header-container"></div>
 
-    <!-- Navigation -->
-    <nav class="nav">
-        <div class="nav-content">
-            <ul class="nav-list">
-                <li class="nav-item">
-                    <a href="#" class="nav-link">Trang chủ</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">Thông tin công ty</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">Dịch vụ nội bộ</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">Tài liệu công ty</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">Liên hệ</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+    <!-- Navigation Component -->
+    <div id="nav-container"></div>
 
     <!-- Main Content -->
     <main class="main">
@@ -489,46 +348,26 @@
         </div>
     </footer>
 
+    <script src="page/component/common.js"></script>
     <script>
-        // Hiển thị ngày giờ hiện tại
-        function updateDateTime() {
-            const now = new Date();
-            const dateOptions = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            };
-            const timeOptions = { 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit' 
-            };
+        // Nạp header và navigation component cho trang chính
+        window.addEventListener('DOMContentLoaded', function() {
+            // Header
+            fetch('page/component/header.html')
+                .then(res => res.text())
+                .then(data => {
+                    document.getElementById('header-container').innerHTML = data;
+                });
+            // Navigation
+            fetch('page/component/navigation.html')
+                .then(res => res.text())
+                .then(data => {
+                    document.getElementById('nav-container').innerHTML = data;
+                });
             
-            document.getElementById('currentDate').textContent = now.toLocaleDateString('vi-VN', dateOptions);
-            document.getElementById('currentTime').textContent = now.toLocaleTimeString('vi-VN', timeOptions);
-        }
-
-        // Cập nhật mỗi giây
-        updateDateTime();
-        setInterval(updateDateTime, 1000);
-
-        // Thêm hiệu ứng loading cho các link
-        document.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', function(e) {
-                if (this.href && this.href !== '#') {
-                    // Thêm class loading nếu cần
-                    this.style.opacity = '0.7';
-                    setTimeout(() => {
-                        this.style.opacity = '1';
-                    }, 200);
-                }
-            });
+            // Console log để debug trang chính
+            console.log('Trang chủ đã tải thành công!');
         });
-
-        // Console log để debug
-        console.log('Hệ thống Quản lý Doanh nghiệp đã tải thành công!');
-        console.log('Phiên bản: 1.0.0 - Phong cách Doanh nghiệp Chuyên nghiệp');
     </script>
 </body>
 </html>

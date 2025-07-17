@@ -12,36 +12,26 @@ const rememberMeCheckbox = document.getElementById('rememberMe');
 // Biến để theo dõi trạng thái hiển thị mật khẩu
 let isPasswordVisible = false;
 
-// Hiển thị ngày giờ hiện tại
-function updateDateTime() {
-    const now = new Date();
-    const dateOptions = { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-    };
-    const timeOptions = { 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        second: '2-digit' 
-    };
+// Nạp header và navigation component cho trang đăng nhập
+window.addEventListener('DOMContentLoaded', function() {
+    // Header
+    fetch('../../../component/header.html')
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById('header-container').innerHTML = data;
+            console.log('Header đã được tải');
+        })
+        .catch(error => console.error('Lỗi khi tải header:', error));
     
-    const dateElements = document.querySelectorAll('#currentDate');
-    const timeElements = document.querySelectorAll('#currentTime');
-    
-    dateElements.forEach(element => {
-        element.textContent = now.toLocaleDateString('vi-VN', dateOptions);
-    });
-    
-    timeElements.forEach(element => {
-        element.textContent = now.toLocaleTimeString('vi-VN', timeOptions);
-    });
-}
-
-// Cập nhật mỗi giây
-updateDateTime();
-setInterval(updateDateTime, 1000);
+    // Navigation
+    fetch('../../../component/navigation.html')
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById('nav-container').innerHTML = data;
+            console.log('Navigation đã được tải');
+        })
+        .catch(error => console.error('Lỗi khi tải navigation:', error));
+});
 
 // Hàm hiển thị/ẩn mật khẩu
 function togglePasswordVisibility() {

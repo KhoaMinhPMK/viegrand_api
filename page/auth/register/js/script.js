@@ -472,11 +472,23 @@ startDateInput.setAttribute('max', today);
 console.log('Trang đăng ký tài khoản đã tải thành công!');
 console.log('Sử dụng CommonUtils từ component/common.js'); 
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Load header component
+// Nạp header và navigation component cho trang đăng ký
+window.addEventListener('DOMContentLoaded', function() {
+    // Header
     fetch('../../../component/header.html')
         .then(res => res.text())
-        .then(html => {
-            document.getElementById('header-container').innerHTML = html;
-        });
-}); 
+        .then(data => {
+            document.getElementById('header-container').innerHTML = data;
+            console.log('Header đã được tải');
+        })
+        .catch(error => console.error('Lỗi khi tải header:', error));
+    
+    // Navigation
+    fetch('../../../component/navigation.html')
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById('nav-container').innerHTML = data;
+            console.log('Navigation đã được tải');
+        })
+        .catch(error => console.error('Lỗi khi tải navigation:', error));
+});
