@@ -5,8 +5,8 @@ document.addEventListener('DOMContentLoaded', function() {
     loadNavigation();
     loadFooter();
     
-    // Khởi tạo dữ liệu mẫu
-    initializeDemoData();
+    // Tải dữ liệu thực tế từ API
+    loadAccountsFromAPI();
     
     // Set up event listeners
     setupEventListeners();
@@ -112,114 +112,100 @@ let pageSize = 10; // Số mục trên mỗi trang
 let pendingActionCallback = null; // Callback cho modal xác nhận
 let currentAccountId = null; // ID tài khoản đang được chỉnh sửa
 
-// Khởi tạo dữ liệu mẫu
-function initializeDemoData() {
-    // Dữ liệu mẫu cho danh sách tài khoản
-    const departmentOptions = ['it', 'hr', 'finance', 'marketing', 'sales', 'operations'];
-    const statusOptions = ['pending', 'active', 'inactive'];
-    const positionOptions = ['Nhân viên', 'Trưởng nhóm', 'Quản lý', 'Giám đốc'];
-    
-    // Tạo 50 tài khoản mẫu
-    for (let i = 1; i <= 50; i++) {
-        const firstName = `Nguyễn Văn`;
-        const lastName = `A${i}`;
-        const employeeId = `NV${i.toString().padStart(4, '0')}`;
+// Tải dữ liệu thật từ API
+async function loadAccountsFromAPI() {
+    try {
+        // Hiển thị indicator loading
+        showLoading(true);
         
-        const account = {
-            id: i,
-            employeeId: employeeId,
-            firstName: firstName,
-            lastName: lastName,
-            email: `nhanvien${i}@company.com`,
-            department: departmentOptions[Math.floor(Math.random() * departmentOptions.length)],
-            position: positionOptions[Math.floor(Math.random() * positionOptions.length)],
-            phone: `098${Math.floor(1000000 + Math.random() * 9000000)}`,
-            username: `user${i}`,
-            status: statusOptions[Math.floor(Math.random() * statusOptions.length)],
-            startDate: randomDate(new Date(2020, 0, 1), new Date()),
-            registrationDate: randomDate(new Date(2023, 0, 1), new Date()),
-            notes: ''
+        // Lấy các tham số lọc hiện tại
+        const searchTerm = document.getElementById('searchInput').value;
+        const statusFilter = document.getElementById('statusFilter').value;
+        const departmentFilter = document.getElementById('departmentFilter').value;
+        
+        // Tạo object chứa các bộ lọc
+        const filters = {
+            page: currentPage,
+            pageSize: pageSize,
+            search: searchTerm,
+            status: statusFilter !== 'all' ? statusFilter : null,
+            department: departmentFilter !== 'all' ? departmentFilter : null
         };
         
-        accounts.push(account);
-    }
-    
-    // Tạo nhiều tài khoản chờ duyệt
-    for (let i = 51; i <= 60; i++) {
-        const firstName = `Trần Thị`;
-        const lastName = `B${i-50}`;
-        const employeeId = `NV${i.toString().padStart(4, '0')}`;
+        // Gọi API để lấy dữ liệu
+        const result = await getAccounts(filters);
         
-        const account = {
-            id: i,
-            employeeId: employeeId,
-            firstName: firstName,
-            lastName: lastName,
-            email: `tranthi${i-50}@company.com`,
-            department: departmentOptions[Math.floor(Math.random() * departmentOptions.length)],
-            position: positionOptions[Math.floor(Math.random() * positionOptions.length)],
-            phone: `097${Math.floor(1000000 + Math.random() * 9000000)}`,
-            username: `user${i}`,
-            status: 'pending',
-            startDate: randomDate(new Date(2020, 0, 1), new Date()),
-            registrationDate: new Date(Date.now() - Math.floor(Math.random() * 7 * 24 * 60 * 60 * 1000)),
-            notes: ''
-        };
-        
-        accounts.push(account);
+        if (result.success) {
+            // Cập nhật dữ liệu
+            accounts = result.accounts;
+            filteredAccounts = [...accounts];
+            
+            // Cập nhật thông tin phân trang
+            currentPage = result.pagination.page;
+            pageSize = result.pagination.pageSize;
+            
+            // Cập nhật số lượng tài khoản
+            updateSummaryCardsWithData(result.counts);
+            
+            // Cập nhật giao diện
+            updateUI();
+        } else {
+            // Hiển thị thông báo lỗi
+            alert('Lỗi khi tải dữ liệu: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Lỗi khi tải dữ liệu:', error);
+        alert('Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại sau.');
+    } finally {
+        // Ẩn indicator loading
+        showLoading(false);
     }
-    
-    refreshData();
 }
 
-// Hàm tạo ngày ngẫu nhiên
-function randomDate(start, end) {
-    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+// Hiển thị hoặc ẩn loading indicator
+function showLoading(show) {
+    // Kiểm tra xem đã có loading indicator chưa
+    let loadingIndicator = document.querySelector('.loading-indicator');
+    
+    if (show) {
+        // Nếu chưa có, tạo mới
+        if (!loadingIndicator) {
+            loadingIndicator = document.createElement('div');
+            loadingIndicator.className = 'loading-indicator';
+            loadingIndicator.innerHTML = `
+                <div class="spinner"></div>
+                <p>Đang tải dữ liệu...</p>
+            `;
+            document.body.appendChild(loadingIndicator);
+        }
+        loadingIndicator.style.display = 'flex';
+    } else if (loadingIndicator) {
+        // Ẩn nếu đã có
+        loadingIndicator.style.display = 'none';
+    }
 }
 
 // Lọc danh sách tài khoản
-function filterAccounts() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const statusFilter = document.getElementById('statusFilter').value;
-    const departmentFilter = document.getElementById('departmentFilter').value;
-    
-    filteredAccounts = accounts.filter(account => {
-        // Lọc theo từ khóa tìm kiếm
-        const matchesSearch = 
-            account.employeeId.toLowerCase().includes(searchTerm) ||
-            account.firstName.toLowerCase().includes(searchTerm) ||
-            account.lastName.toLowerCase().includes(searchTerm) ||
-            account.email.toLowerCase().includes(searchTerm);
-        
-        // Lọc theo trạng thái
-        const matchesStatus = statusFilter === 'all' || account.status === statusFilter;
-        
-        // Lọc theo phòng ban
-        const matchesDepartment = departmentFilter === 'all' || account.department === departmentFilter;
-        
-        return matchesSearch && matchesStatus && matchesDepartment;
-    });
-    
+async function filterAccounts() {
     // Reset về trang đầu tiên sau khi lọc
     currentPage = 1;
     
-    // Cập nhật giao diện
-    updateUI();
+    // Tải lại dữ liệu với bộ lọc mới
+    await loadAccountsFromAPI();
 }
 
 // Làm mới dữ liệu
-function refreshData() {
+async function refreshData() {
     // Reset filters
     document.getElementById('searchInput').value = '';
     document.getElementById('statusFilter').value = 'all';
     document.getElementById('departmentFilter').value = 'all';
     
-    // Reset filtered data
-    filteredAccounts = [...accounts];
+    // Reset về trang đầu tiên
     currentPage = 1;
     
-    // Update UI
-    updateUI();
+    // Tải lại dữ liệu
+    await loadAccountsFromAPI();
 }
 
 // Cập nhật giao diện người dùng
@@ -335,7 +321,9 @@ function mapDepartmentText(department) {
 
 // Cập nhật pagination
 function updatePagination() {
-    const totalPages = Math.ceil(filteredAccounts.length / pageSize);
+    // Lấy thông tin phân trang từ API response
+    const totalItems = accounts.length;
+    const totalPages = Math.ceil(totalItems / pageSize);
     const prevButton = document.getElementById('prevPage');
     const nextButton = document.getElementById('nextPage');
     const pageNumbers = document.getElementById('pageNumbers');
@@ -381,6 +369,13 @@ function updatePagination() {
             addPageNumber(totalPages);
         }
     }
+    
+    // Cập nhật thông tin hiển thị "Hiển thị X-Y của Z tài khoản"
+    const startIndex = (currentPage - 1) * pageSize + 1;
+    const endIndex = Math.min(startIndex + pageSize - 1, totalItems);
+    
+    document.getElementById('currentRange').textContent = `${startIndex}-${endIndex}`;
+    document.getElementById('totalItems').textContent = totalItems;
 }
 
 // Thêm số trang vào pagination
@@ -407,36 +402,47 @@ function addEllipsis() {
 }
 
 // Đi đến trang cụ thể
-function goToPage(page) {
+async function goToPage(page) {
     currentPage = page;
-    updateUI();
+    await loadAccountsFromAPI();
 }
 
 // Đi đến trang trước
-function goToPreviousPage() {
+async function goToPreviousPage() {
     if (currentPage > 1) {
         currentPage--;
-        updateUI();
+        await loadAccountsFromAPI();
     }
 }
 
 // Đi đến trang tiếp theo
-function goToNextPage() {
-    const totalPages = Math.ceil(filteredAccounts.length / pageSize);
+async function goToNextPage() {
+    // Lấy tổng số trang từ API response
+    const totalItems = accounts.length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    
     if (currentPage < totalPages) {
         currentPage++;
-        updateUI();
+        await loadAccountsFromAPI();
     }
 }
 
 // Thay đổi kích thước trang
-function changePageSize() {
+async function changePageSize() {
     pageSize = parseInt(document.getElementById('pageSize').value);
     currentPage = 1;
-    updateUI();
+    await loadAccountsFromAPI();
 }
 
-// Cập nhật thẻ tóm tắt
+// Cập nhật thẻ tóm tắt với dữ liệu từ API
+function updateSummaryCardsWithData(counts) {
+    document.getElementById('pendingCount').textContent = counts.pending;
+    document.getElementById('activeCount').textContent = counts.active;
+    document.getElementById('inactiveCount').textContent = counts.inactive;
+    document.getElementById('totalCount').textContent = counts.total;
+}
+
+// Cập nhật thẻ tóm tắt (phương thức cũ giữ lại để tương thích)
 function updateSummaryCards() {
     const pendingCount = accounts.filter(account => account.status === 'pending').length;
     const activeCount = accounts.filter(account => account.status === 'active').length;
@@ -502,16 +508,27 @@ function approveSelected() {
     showConfirmationModal(
         'Duyệt tài khoản',
         `Bạn có chắc chắn muốn duyệt ${selectedIds.length} tài khoản đã chọn?`,
-        () => {
-            selectedIds.forEach(id => {
-                const account = accounts.find(acc => acc.id === id);
-                if (account && account.status === 'pending') {
-                    account.status = 'active';
+        async () => {
+            try {
+                showLoading(true);
+                
+                // Gọi API để cập nhật trạng thái hàng loạt
+                const result = await bulkUpdateAccounts(selectedIds, { status: 'active' });
+                
+                if (result.success) {
+                    showNotification(`Đã duyệt ${selectedIds.length} tài khoản thành công`, 'success');
+                    // Tải lại dữ liệu
+                    await loadAccountsFromAPI();
+                } else {
+                    showNotification(`Lỗi: ${result.message}`, 'error');
                 }
-            });
-            
-            showNotification(`Đã duyệt ${selectedIds.length} tài khoản thành công`, 'success');
-            cancelSelection();
+            } catch (error) {
+                console.error('Lỗi khi duyệt tài khoản:', error);
+                showNotification('Đã xảy ra lỗi khi duyệt tài khoản', 'error');
+            } finally {
+                cancelSelection();
+                showLoading(false);
+            }
             updateUI();
         }
     );
@@ -525,17 +542,27 @@ function deactivateSelected() {
     showConfirmationModal(
         'Vô hiệu hóa tài khoản',
         `Bạn có chắc chắn muốn vô hiệu hóa ${selectedIds.length} tài khoản đã chọn?`,
-        () => {
-            selectedIds.forEach(id => {
-                const account = accounts.find(acc => acc.id === id);
-                if (account && account.status === 'active') {
-                    account.status = 'inactive';
+        async () => {
+            try {
+                showLoading(true);
+                
+                // Gọi API để cập nhật trạng thái hàng loạt
+                const result = await bulkUpdateAccounts(selectedIds, { status: 'inactive' });
+                
+                if (result.success) {
+                    showNotification(`Đã vô hiệu hóa ${selectedIds.length} tài khoản thành công`, 'success');
+                    // Tải lại dữ liệu
+                    await loadAccountsFromAPI();
+                } else {
+                    showNotification(`Lỗi: ${result.message}`, 'error');
                 }
-            });
-            
-            showNotification(`Đã vô hiệu hóa ${selectedIds.length} tài khoản thành công`, 'success');
-            cancelSelection();
-            updateUI();
+            } catch (error) {
+                console.error('Lỗi khi vô hiệu hóa tài khoản:', error);
+                showNotification('Đã xảy ra lỗi khi vô hiệu hóa tài khoản', 'error');
+            } finally {
+                cancelSelection();
+                showLoading(false);
+            }
         }
     );
 }
@@ -548,40 +575,75 @@ function deleteSelected() {
     showConfirmationModal(
         'Xóa tài khoản',
         `Bạn có chắc chắn muốn xóa ${selectedIds.length} tài khoản đã chọn? Hành động này không thể hoàn tác.`,
-        () => {
-            accounts = accounts.filter(account => !selectedIds.includes(account.id));
-            filteredAccounts = filteredAccounts.filter(account => !selectedIds.includes(account.id));
-            
-            showNotification(`Đã xóa ${selectedIds.length} tài khoản thành công`, 'success');
-            cancelSelection();
-            updateUI();
+        async () => {
+            try {
+                showLoading(true);
+                
+                // Xóa từng tài khoản một
+                let successCount = 0;
+                for (const id of selectedIds) {
+                    const result = await deleteAccount(id, false); // false để không hiển thị thông báo riêng
+                    if (result.success) {
+                        successCount++;
+                    }
+                }
+                
+                if (successCount > 0) {
+                    showNotification(`Đã xóa ${successCount}/${selectedIds.length} tài khoản thành công`, 'success');
+                    // Tải lại dữ liệu
+                    await loadAccountsFromAPI();
+                } else {
+                    showNotification('Không có tài khoản nào được xóa thành công', 'error');
+                }
+            } catch (error) {
+                console.error('Lỗi khi xóa tài khoản:', error);
+                showNotification('Đã xảy ra lỗi khi xóa tài khoản', 'error');
+            } finally {
+                cancelSelection();
+                showLoading(false);
+            }
         }
     );
 }
 
 // Xem chi tiết tài khoản
-function viewAccount(accountId) {
-    const account = accounts.find(acc => acc.id === accountId);
-    if (!account) return;
-    
-    currentAccountId = accountId;
-    
-    // Điền thông tin vào form
-    document.getElementById('employeeId').value = account.employeeId;
-    document.getElementById('status').value = account.status;
-    document.getElementById('firstName').value = account.firstName;
-    document.getElementById('lastName').value = account.lastName;
-    document.getElementById('email').value = account.email;
-    document.getElementById('phone').value = account.phone;
-    document.getElementById('department').value = account.department;
-    document.getElementById('position').value = account.position;
-    document.getElementById('startDate').value = formatDateForInput(account.startDate);
-    document.getElementById('username').value = account.username;
-    document.getElementById('resetPassword').checked = false;
-    document.getElementById('notes').value = account.notes || '';
-    
-    // Hiển thị modal
-    document.getElementById('actionModal').style.display = 'block';
+async function viewAccount(accountId) {
+    try {
+        showLoading(true);
+        
+        // Lấy thông tin chi tiết tài khoản từ API
+        const result = await getAccountDetail(accountId);
+        
+        if (!result.success || !result.account) {
+            showNotification('Không thể tải thông tin tài khoản: ' + (result.message || 'Lỗi không xác định'), 'error');
+            return;
+        }
+        
+        const account = result.account;
+        currentAccountId = accountId;
+        
+        // Điền thông tin vào form
+        document.getElementById('employeeId').value = account.employeeId;
+        document.getElementById('status').value = account.status;
+        document.getElementById('firstName').value = account.firstName;
+        document.getElementById('lastName').value = account.lastName;
+        document.getElementById('email').value = account.email;
+        document.getElementById('phone').value = account.phone || '';
+        document.getElementById('department').value = account.department;
+        document.getElementById('position').value = account.position || '';
+        document.getElementById('startDate').value = formatDateForInput(account.startDate);
+        document.getElementById('username').value = account.username;
+        document.getElementById('resetPassword').checked = false;
+        document.getElementById('notes').value = account.notes || '';
+        
+        // Hiển thị modal
+        document.getElementById('actionModal').style.display = 'block';
+    } catch (error) {
+        console.error('Lỗi khi tải thông tin tài khoản:', error);
+        showNotification('Đã xảy ra lỗi khi tải thông tin tài khoản', 'error');
+    } finally {
+        showLoading(false);
+    }
 }
 
 // Định dạng ngày cho input date
@@ -591,11 +653,8 @@ function formatDateForInput(dateValue) {
 }
 
 // Lưu thay đổi tài khoản
-function saveAccountChanges() {
+async function saveAccountChanges() {
     if (!currentAccountId) return;
-    
-    const account = accounts.find(acc => acc.id === currentAccountId);
-    if (!account) return;
     
     // Lấy giá trị từ form
     const status = document.getElementById('status').value;
@@ -610,104 +669,294 @@ function saveAccountChanges() {
     const notes = document.getElementById('notes').value.trim();
     
     // Validate
-    if (!firstName || !lastName || !email || !phone || !position || !startDate) {
+    if (!firstName || !lastName || !email || !position || !startDate) {
         showNotification('Vui lòng điền đầy đủ thông tin bắt buộc', 'error');
         return;
     }
     
-    // Cập nhật thông tin tài khoản
-    account.status = status;
-    account.firstName = firstName;
-    account.lastName = lastName;
-    account.email = email;
-    account.phone = phone;
-    account.department = department;
-    account.position = position;
-    account.startDate = new Date(startDate);
-    account.notes = notes;
-    
-    // Xử lý đặt lại mật khẩu nếu được chọn
-    if (resetPassword) {
-        // Trong ứng dụng thực tế, bạn sẽ gửi email đặt lại mật khẩu hoặc tạo mật khẩu tạm thời
-        console.log(`Đặt lại mật khẩu cho tài khoản: ${account.username}`);
+    try {
+        showLoading(true);
+        
+        // Chuẩn bị dữ liệu để cập nhật
+        const updateData = {
+            id: currentAccountId,
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phone: phone,
+            department: department,
+            position: position,
+            startDate: startDate,
+            status: status,
+            notes: notes,
+            resetPassword: resetPassword
+        };
+        
+        // Gọi API để cập nhật
+        const result = await updateAccount(currentAccountId, updateData);
+        
+        if (result.success) {
+            showNotification('Đã cập nhật thông tin tài khoản thành công', 'success');
+            
+            // Hiển thị mật khẩu mới nếu có
+            if (resetPassword && result.newPassword) {
+                alert(`Mật khẩu mới của tài khoản là: ${result.newPassword}\nVui lòng lưu lại mật khẩu này để cung cấp cho người dùng.`);
+            }
+            
+            // Tải lại dữ liệu
+            await loadAccountsFromAPI();
+            
+            // Đóng modal
+            closeModals();
+        } else {
+            showNotification(`Lỗi: ${result.message}`, 'error');
+        }
+    } catch (error) {
+        console.error('Lỗi khi cập nhật tài khoản:', error);
+        showNotification('Đã xảy ra lỗi khi cập nhật tài khoản', 'error');
+    } finally {
+        showLoading(false);
     }
-    
-    showNotification('Đã cập nhật thông tin tài khoản thành công', 'success');
-    closeModals();
-    updateUI();
 }
 
 // Xem lịch sử tài khoản
-function viewAccountHistory() {
+async function viewAccountHistory() {
     if (!currentAccountId) return;
     
-    // Trong ứng dụng thực tế, bạn sẽ tải lịch sử tài khoản từ cơ sở dữ liệu
-    showNotification('Chức năng này sẽ hiển thị lịch sử hoạt động của tài khoản', 'info');
+    try {
+        showLoading(true);
+        
+        // Gọi API để lấy lịch sử
+        const result = await getAccountHistory(currentAccountId);
+        
+        if (result.success && result.history) {
+            // Tạo popup hiển thị lịch sử
+            let historyHtml = `
+                <div class="history-modal">
+                    <div class="history-modal-content">
+                        <div class="history-modal-header">
+                            <h3>Lịch sử hoạt động</h3>
+                            <span class="close-history">&times;</span>
+                        </div>
+                        <div class="history-modal-body">
+                            <table class="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Hoạt động</th>
+                                        <th>Người thực hiện</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+            `;
+            
+            if (result.history.length > 0) {
+                result.history.forEach(item => {
+                    historyHtml += `
+                        <tr>
+                            <td>${item.created_at}</td>
+                            <td>${item.description}</td>
+                            <td>${item.admin_name || 'Hệ thống'}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                historyHtml += `
+                    <tr>
+                        <td colspan="3" class="no-data">Chưa có hoạt động nào được ghi nhận</td>
+                    </tr>
+                `;
+            }
+            
+            historyHtml += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Thêm modal vào trang
+            const historyModalDiv = document.createElement('div');
+            historyModalDiv.id = 'historyModal';
+            historyModalDiv.innerHTML = historyHtml;
+            document.body.appendChild(historyModalDiv);
+            
+            // Hiển thị modal
+            historyModalDiv.style.display = 'block';
+            
+            // Thêm event listener để đóng
+            document.querySelector('.close-history').addEventListener('click', () => {
+                document.body.removeChild(historyModalDiv);
+            });
+            
+            // Đóng khi click ngoài modal
+            window.addEventListener('click', function(event) {
+                if (event.target === historyModalDiv) {
+                    document.body.removeChild(historyModalDiv);
+                }
+            });
+        } else {
+            showNotification('Không thể tải lịch sử tài khoản: ' + (result.message || 'Lỗi không xác định'), 'error');
+        }
+    } catch (error) {
+        console.error('Lỗi khi tải lịch sử tài khoản:', error);
+        showNotification('Đã xảy ra lỗi khi tải lịch sử tài khoản', 'error');
+    } finally {
+        showLoading(false);
+    }
 }
 
 // Duyệt tài khoản
-function approveAccount(accountId) {
+async function approveAccount(accountId) {
+    // Tìm tài khoản trong danh sách hiện tại
     const account = accounts.find(acc => acc.id === accountId);
-    if (!account || account.status !== 'pending') return;
+    if (!account) return;
     
     showConfirmationModal(
         'Duyệt tài khoản',
         `Bạn có chắc chắn muốn duyệt tài khoản "${account.lastName} ${account.firstName}" (${account.employeeId})?`,
-        () => {
-            account.status = 'active';
-            showNotification('Tài khoản đã được duyệt thành công', 'success');
-            updateUI();
+        async () => {
+            try {
+                showLoading(true);
+                
+                // Gọi API cập nhật trạng thái
+                const result = await updateAccountStatus(accountId, 'active');
+                
+                if (result.success) {
+                    showNotification('Tài khoản đã được duyệt thành công', 'success');
+                    // Tải lại dữ liệu
+                    await loadAccountsFromAPI();
+                } else {
+                    showNotification(`Lỗi: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Lỗi khi duyệt tài khoản:', error);
+                showNotification('Đã xảy ra lỗi khi duyệt tài khoản', 'error');
+            } finally {
+                showLoading(false);
+            }
         }
     );
 }
 
 // Vô hiệu hóa tài khoản
-function deactivateAccount(accountId) {
+async function deactivateAccount(accountId) {
+    // Tìm tài khoản trong danh sách hiện tại
     const account = accounts.find(acc => acc.id === accountId);
-    if (!account || account.status !== 'active') return;
+    if (!account) return;
     
     showConfirmationModal(
         'Vô hiệu hóa tài khoản',
         `Bạn có chắc chắn muốn vô hiệu hóa tài khoản "${account.lastName} ${account.firstName}" (${account.employeeId})?`,
-        () => {
-            account.status = 'inactive';
-            showNotification('Tài khoản đã được vô hiệu hóa', 'success');
-            updateUI();
+        async () => {
+            try {
+                showLoading(true);
+                
+                // Gọi API cập nhật trạng thái
+                const result = await updateAccountStatus(accountId, 'inactive');
+                
+                if (result.success) {
+                    showNotification('Tài khoản đã được vô hiệu hóa', 'success');
+                    // Tải lại dữ liệu
+                    await loadAccountsFromAPI();
+                } else {
+                    showNotification(`Lỗi: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Lỗi khi vô hiệu hóa tài khoản:', error);
+                showNotification('Đã xảy ra lỗi khi vô hiệu hóa tài khoản', 'error');
+            } finally {
+                showLoading(false);
+            }
         }
     );
 }
 
 // Kích hoạt lại tài khoản
-function reactivateAccount(accountId) {
+async function reactivateAccount(accountId) {
+    // Tìm tài khoản trong danh sách hiện tại
     const account = accounts.find(acc => acc.id === accountId);
-    if (!account || account.status !== 'inactive') return;
+    if (!account) return;
     
     showConfirmationModal(
         'Kích hoạt tài khoản',
         `Bạn có chắc chắn muốn kích hoạt lại tài khoản "${account.lastName} ${account.firstName}" (${account.employeeId})?`,
-        () => {
-            account.status = 'active';
-            showNotification('Tài khoản đã được kích hoạt lại', 'success');
-            updateUI();
+        async () => {
+            try {
+                showLoading(true);
+                
+                // Gọi API cập nhật trạng thái
+                const result = await updateAccountStatus(accountId, 'active');
+                
+                if (result.success) {
+                    showNotification('Tài khoản đã được kích hoạt lại', 'success');
+                    // Tải lại dữ liệu
+                    await loadAccountsFromAPI();
+                } else {
+                    showNotification(`Lỗi: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Lỗi khi kích hoạt tài khoản:', error);
+                showNotification('Đã xảy ra lỗi khi kích hoạt tài khoản', 'error');
+            } finally {
+                showLoading(false);
+            }
         }
     );
 }
 
 // Xóa tài khoản
-function deleteAccount(accountId) {
+async function deleteAccount(accountId, showConfirm = true) {
+    // Tìm tài khoản trong danh sách hiện tại
     const account = accounts.find(acc => acc.id === accountId);
-    if (!account) return;
+    if (!account) return { success: false, message: 'Không tìm thấy tài khoản' };
     
-    showConfirmationModal(
-        'Xóa tài khoản',
-        `Bạn có chắc chắn muốn xóa tài khoản "${account.lastName} ${account.firstName}" (${account.employeeId})? Hành động này không thể hoàn tác.`,
-        () => {
-            accounts = accounts.filter(acc => acc.id !== accountId);
-            filteredAccounts = filteredAccounts.filter(acc => acc.id !== accountId);
-            showNotification('Tài khoản đã được xóa thành công', 'success');
-            updateUI();
+    const deleteAction = async () => {
+        try {
+            showLoading(true);
+            
+            // Gọi API xóa tài khoản
+            const result = await window.deleteAccount(accountId);
+            
+            if (result.success) {
+                if (showConfirm) {
+                    showNotification('Tài khoản đã được xóa thành công', 'success');
+                    // Tải lại dữ liệu
+                    await loadAccountsFromAPI();
+                }
+                return { success: true };
+            } else {
+                if (showConfirm) {
+                    showNotification(`Lỗi: ${result.message}`, 'error');
+                }
+                return { success: false, message: result.message };
+            }
+        } catch (error) {
+            console.error('Lỗi khi xóa tài khoản:', error);
+            if (showConfirm) {
+                showNotification('Đã xảy ra lỗi khi xóa tài khoản', 'error');
+            }
+            return { success: false, message: 'Đã xảy ra lỗi khi xóa tài khoản' };
+        } finally {
+            if (showConfirm) {
+                showLoading(false);
+            }
         }
-    );
+    };
+    
+    // Nếu yêu cầu hiển thị xác nhận
+    if (showConfirm) {
+        showConfirmationModal(
+            'Xóa tài khoản',
+            `Bạn có chắc chắn muốn xóa tài khoản "${account.lastName} ${account.firstName}" (${account.employeeId})? Hành động này không thể hoàn tác.`,
+            deleteAction
+        );
+        return { success: true }; // Trả về kết quả chờ xác nhận
+    } else {
+        // Thực hiện xóa ngay mà không cần xác nhận
+        return await deleteAction();
+    }
 }
 
 // Xác nhận xóa tài khoản từ modal chi tiết
